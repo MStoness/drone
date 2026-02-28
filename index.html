@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>无人机结构介绍测验1</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 16px;
+        }
+        .question-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .q-type {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 30px;
+            background: #dbeafe;
+            color: #1e40af;
+            display: inline-block;
+        }
+        .q-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #0f172a;
+            line-height: 1.4;
+            flex: 1;
+        }
+        .options {
+            margin-top: 8px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            transition: background 0.1s;
+        }
+        .option input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            flex-shrink: 0;
+        }
+        .option label {
+            font-size: 15px;
+            color: #334155;
+            line-height: 1.4;
+            word-break: break-word;
+            flex: 1;
+        }
+        .mark {
+            font-size: 18px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+        .correct-mark {
+            color: #16a34a;
+        }
+        .incorrect-mark {
+            color: #dc2626;
+        }
+        .answer-display {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #e6f7e6;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #166534;
+            border-left: 4px solid #22c55e;
+            word-break: break-word;
+        }
+        .btn-submit {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            margin: 16px 0 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            transition: background 0.2s;
+        }
+        .btn-submit:active {
+            background: #1d4ed8;
+        }
+        #result {
+            background: #e6f7e6;
+            border-radius: 40px;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #166534;
+            margin: 20px 0 10px;
+            border: 2px solid #86efac;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 20px 0 10px;
+        }
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✈️ 无人机结构介绍测验1</h1>
+        <div class="subtitle">共15题（5单选 + 5多选 + 5判断）· 满分100分</div>
+
+        <div id="questionsContainer"></div>
+
+        <button class="btn-submit" id="submitBtn">提交答案</button>
+        <div id="result"></div>
+        <footer>—— 答完即评，自动显示正确答案 ——</footer>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 题目数据 ----------
+            const questions = [
+                // 1 单选
+                { type: 'single', 
+                  question: '1. 以下哪种无人机类型通常具有较长的续航时间', 
+                  options: ['多旋翼无人机', '固定翼无人机', '单旋翼无人机', '倾转式垂直起降固定翼无人机'], 
+                  answer: '固定翼无人机' },
+                // 2 单选
+                { type: 'single', 
+                  question: '2. eVTOL无人机最显著的特点是', 
+                  options: ['仅能垂直起降', '仅能水平飞行', '可垂直起降且能高速巡航', '依靠螺旋桨提供升力'], 
+                  answer: '可垂直起降且能高速巡航' },
+                // 3 单选
+                { type: 'single', 
+                  question: '3. 尾座式垂直起降固定翼无人机的起降方式是', 
+                  options: ['通过机翼倾转实现起降', '以机尾为支撑垂直起降', '依靠单独的升力风扇起降', '需要跑道滑跑起降'], 
+                  answer: '以机尾为支撑垂直起降' },
+                // 4 单选
+                { type: 'single', 
+                  question: '4. 单旋翼无人机与多旋翼无人机相比，最主要的区别在于', 
+                  options: ['飞行高度更高', '续航时间更长', '需要尾桨控制方向', '载重能力更弱'], 
+                  answer: '需要尾桨控制方向' },
+                // 5 单选
+                { type: 'single', 
+                  question: '5. 倾转动力分布式垂直起降固定翼无人机的动力系统特点是', 
+                  options: ['部分动力装置可倾转', '所有动力装置固定朝上', '仅有机翼上的动力可倾转', '依靠机身倾转实现起降'], 
+                  answer: '部分动力装置可倾转' },
+                // 6 多选
+                { type: 'multiple', 
+                  question: '6. 以下属于垂直起降固定翼无人机类型的有', 
+                  options: ['尾座式', '倾转式', '倾转动力分布式', '单旋翼带尾桨式'], 
+                  answer: ['尾座式', '倾转式', '倾转动力分布式'] },
+                // 7 多选
+                { type: 'multiple', 
+                  question: '7. 多旋翼无人机的主要组成部分包括', 
+                  options: ['多个旋翼', '飞控系统', '电池', '固定机翼'], 
+                  answer: ['多个旋翼', '飞控系统', '电池'] },
+                // 8 多选
+                { type: 'multiple', 
+                  question: '8. 固定翼无人机的飞行原理涉及到的空气动力学概念有', 
+                  options: ['伯努利原理', '升力', '阻力', '反扭矩'], 
+                  answer: ['伯努利原理', '升力', '阻力'] },
+                // 9 多选
+                { type: 'multiple', 
+                  question: '9. 以下无人机类型中，能够实现垂直起降的有', 
+                  options: ['多旋翼无人机', '倾转式垂直起降固定翼无人机', '尾座式垂直起降固定翼无人机', '传统固定翼无人机'], 
+                  answer: ['多旋翼无人机', '倾转式垂直起降固定翼无人机', '尾座式垂直起降固定翼无人机'] },
+                // 10 多选
+                { type: 'multiple', 
+                  question: '10. 单旋翼无人机相比多旋翼无人机的优势可能包括', 
+                  options: ['更大的载重能力', '更长的续航时间', '更好的抗风性能', '更简单的机械结构'], 
+                  answer: ['更大的载重能力', '更长的续航时间', '更好的抗风性能'] },
+                // 11 判断
+                { type: 'judge', 
+                  question: '11. 多旋翼无人机通常通过改变不同旋翼的转速来实现姿态控制', 
+                  options: ['正确', '错误'], 
+                  answer: '正确' },
+                // 12 判断
+                { type: 'judge', 
+                  question: '12. 固定翼无人机在飞行过程中始终需要滑跑才能起飞和降落', 
+                  options: ['正确', '错误'], 
+                  answer: '错误' },
+                // 13 判断
+                { type: 'judge', 
+                  question: '13. 倾转式垂直起降固定翼无人机在巡航阶段，倾转部件会恢复到水平状态', 
+                  options: ['正确', '错误'], 
+                  answer: '正确' },
+                // 14 判断
+                { type: 'judge', 
+                  question: '14. eVTOL无人机仅指电动多旋翼无人机', 
+                  options: ['正确', '错误'], 
+                  answer: '错误' },
+                // 15 判断
+                { type: 'judge', 
+                  question: '15. 尾座式垂直起降固定翼无人机在飞行时需要先转换为水平飞行姿态', 
+                  options: ['正确', '错误'], 
+                  answer: '正确' }
+            ];
+
+            // 渲染题目
+            const container = document.getElementById('questionsContainer');
+            questions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.dataset.index = idx;
+
+                // 头部：类型 + 题目
+                const header = document.createElement('div');
+                header.className = 'question-header';
+
+                const typeSpan = document.createElement('span');
+                typeSpan.className = 'q-type';
+                if (q.type === 'single') typeSpan.innerText = '单选';
+                else if (q.type === 'multiple') typeSpan.innerText = '多选';
+                else typeSpan.innerText = '判断';
+                header.appendChild(typeSpan);
+
+                const qText = document.createElement('div');
+                qText.className = 'q-text';
+                qText.innerText = q.question;
+                header.appendChild(qText);
+
+                card.appendChild(header);
+
+                // 选项区域
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                q.options.forEach((opt, optIdx) => {
+                    const optDiv = document.createElement('div');
+                    optDiv.className = 'option';
+
+                    const input = document.createElement('input');
+                    input.type = (q.type === 'multiple') ? 'checkbox' : 'radio';
+                    input.name = `q${idx}`;
+                    // 值直接存选项文字（方便比较）
+                    input.value = opt;
+                    input.id = `q${idx}_${optIdx}`;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `q${idx}_${optIdx}`;
+                    label.innerText = opt;
+
+                    optDiv.appendChild(input);
+                    optDiv.appendChild(label);
+                    optionsDiv.appendChild(optDiv);
+                });
+
+                card.appendChild(optionsDiv);
+
+                // 预留正确答案显示区域（初始为空）
+                const answerDiv = document.createElement('div');
+                answerDiv.className = 'answer-display';
+                answerDiv.style.display = 'none'; // 提交后才显示
+                answerDiv.id = `answer_${idx}`;
+                card.appendChild(answerDiv);
+
+                container.appendChild(card);
+            });
+
+            // 提交评分
+            document.getElementById('submitBtn').addEventListener('click', function() {
+                let score = 0;
+                const total = questions.length;
+
+                questions.forEach((q, idx) => {
+                    const card = document.querySelectorAll('.question-card')[idx];
+                    const inputs = card.querySelectorAll('.option input');
+                    let userValues = [];
+
+                    // 收集用户选中的值
+                    inputs.forEach(input => {
+                        if (input.checked) {
+                            userValues.push(input.value);
+                        }
+                    });
+
+                    // 多选题需要对用户答案排序（便于比较）
+                    if (q.type === 'multiple') {
+                        userValues.sort();
+                    } else {
+                        // 单选/判断只取第一个（实际上只有一个被选中）
+                        userValues = userValues.length > 0 ? [userValues[0]] : [];
+                    }
+
+                    // 正确答案（标准化为数组）
+                    let correctAnswer = q.answer;
+                    if (!Array.isArray(correctAnswer)) {
+                        correctAnswer = [correctAnswer];
+                    }
+                    // 多选答案也排序
+                    if (q.type === 'multiple') {
+                        correctAnswer = [...correctAnswer].sort();
+                    }
+
+                    // 比较
+                    let isCorrect = false;
+                    if (userValues.length === correctAnswer.length) {
+                        isCorrect = userValues.every((val, i) => val === correctAnswer[i]);
+                    }
+
+                    if (isCorrect) score++;
+
+                    // 移除旧的标记
+                    const existingMark = card.querySelector('.mark');
+                    if (existingMark) existingMark.remove();
+
+                    // 在题目后面添加对错标记
+                    const qTextSpan = card.querySelector('.q-text');
+                    const markSpan = document.createElement('span');
+                    markSpan.className = `mark ${isCorrect ? 'correct-mark' : 'incorrect-mark'}`;
+                    markSpan.innerText = isCorrect ? ' ✓' : ' ✗';
+                    qTextSpan.appendChild(markSpan);
+
+                    // 显示正确答案
+                    const answerDiv = card.querySelector('.answer-display');
+                    let answerText = '';
+                    if (Array.isArray(q.answer)) {
+                        answerText = q.answer.join('、');
+                    } else {
+                        answerText = q.answer;
+                    }
+                    answerDiv.innerHTML = `✅ 正确答案：${answerText}`;
+                    answerDiv.style.display = 'block';
+                });
+
+                // 总分显示
+                const percentage = (score / total * 100).toFixed(0);
+                document.getElementById('result').innerHTML = `🏆 得分：${score}/${total}  (${percentage}分)`;
+            });
+        })();
+    </script>
+</body>
+</html>
